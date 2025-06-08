@@ -37,7 +37,7 @@
 #define NICE_LEVEL      15
 #define LARGECONST 4194304
 
-struct config profile = { 1, 32768, 0, 0, 8192, 8192, 0, 10, 5000, 65535 };
+struct config profile = { 1, 32768, 0, 0, 8192, 8192, 0, 10, 5000, 65535, MEM_VMDATA };
 struct config *pdefault = &profile;
 
 pid_t pid;			/* is global, because we kill the proccess in alarm handler */
@@ -253,7 +253,16 @@ char **parse (char **p)
                 silent = 1;
                 state = PARSE;
               }
-            else
+            else if (strcmp (*p, "--vmdata") == 0) {
+              profile.mem = MEM_VMDATA;
+              state = PARSE;
+            }else if (strcmp (*p, "--vmrss") == 0) {
+              profile.mem = MEM_VMRSS;
+              state = PARSE;
+            }else if (strcmp (*p, "--vmhwm") == 0) {
+              profile.mem = MEM_VMHWM;
+              state = PARSE;
+            }else
               {
                 fprintf (stderr, "error: Invalid option: %s\n", *p);
                 state = ERROR;
@@ -339,6 +348,9 @@ void printusage (char **p)
   fprintf (stderr, "\t--usage   <filename>          Report statistics to ... (default: stderr)\n");
   fprintf (stderr, "\t--chroot  <path>              Directory to chrooted (default: /tmp)\n");
   fprintf (stderr, "\t--error   <path>              Print stderr to file (default: /dev/null)\n");
+  fprintf (stderr, "\t--vmdata                      Parse the memory from the VmData field (default)\n");
+  fprintf (stderr, "\t--vmrss                       Parse the memory from the VmRSS field\n");
+  fprintf (stderr, "\t--vmhwm                       Parse the memory from the VmHWM field\n");
 }
 
 void wallclock (int v)
@@ -509,7 +521,7 @@ int main (int argc, char **argv, char **envp)
           do
             {
               msleep (INTERVAL);
-              memused = memusage (pid);
+              memused = memusage (pid, profile.mem);
               if (memused > -1)
                 {
                   mem = max (mem, memused);
