@@ -4,10 +4,13 @@
 void setlimits (struct config profile)
 {
   setlimit (RLIMIT_CORE, profile.core * 1024);
-  setlimit (RLIMIT_STACK, profile.stack * 1024);
   setlimit (RLIMIT_FSIZE, profile.fsize * 1024);
   setlimit (RLIMIT_NPROC, profile.nproc);
   setlimit (RLIMIT_CPU, profile.cpu);
+
+  if (profile.stack > 0) {
+    setlimit (RLIMIT_STACK, profile.stack * 1024);
+  }
 
   /* socket buffer size in bytes */
   setlimit (RLIMIT_SBSIZE, 0);

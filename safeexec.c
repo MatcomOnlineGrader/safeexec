@@ -332,7 +332,7 @@ void printusage (char **p)
            pdefault->nproc);
   fprintf (stderr, "\t--fsize   <kbytes>            Default: %lu kbyte(s)\n",
            pdefault->fsize);
-  fprintf (stderr, "\t--stack   <kbytes>            Default: %lu kbyte(s)\n",
+  fprintf (stderr, "\t--stack   <kbytes>            Default: %lu kbyte(s) - 0 sets no limit\n",
            pdefault->stack);
   fprintf (stderr, "\t--clock   <seconds>           Wall clock timeout (default: %lu)\n",
            pdefault->clock);
