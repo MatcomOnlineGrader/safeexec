@@ -37,7 +37,7 @@
 #define NICE_LEVEL      15
 #define LARGECONST 4194304
 
-struct config profile = { 1, 32768, 0, 0, 8192, 8192, 0, 10, 5000, 65535 };
+struct config profile = { 1, 32768, 0, 0, 8192, 8192, 0, 10, 5000, 65535, 0 };
 struct config *pdefault = &profile;
 
 pid_t pid;			/* is global, because we kill the proccess in alarm handler */
@@ -253,6 +253,11 @@ char **parse (char **p)
                 silent = 1;
                 state = PARSE;
               }
+            else if (strcmp (*p, "--vmrss") == 0)
+              {
+                profile.use_vmrss = 1;
+                state = PARSE;
+              }
             else
               {
                 fprintf (stderr, "error: Invalid option: %s\n", *p);
@@ -339,6 +344,7 @@ void printusage (char **p)
   fprintf (stderr, "\t--usage   <filename>          Report statistics to ... (default: stderr)\n");
   fprintf (stderr, "\t--chroot  <path>              Directory to chrooted (default: /tmp)\n");
   fprintf (stderr, "\t--error   <path>              Print stderr to file (default: /dev/null)\n");
+  fprintf (stderr, "\t--vmrss                       Use VMRSS instead of VmData+VmStk\n");
 }
 
 void wallclock (int v)
@@ -509,7 +515,7 @@ int main (int argc, char **argv, char **envp)
           do
             {
               msleep (INTERVAL);
-              memused = memusage (pid);
+              memused = memusage (pid, profile.use_vmrss);
               if (memused > -1)
                 {
                   mem = max (mem, memused);

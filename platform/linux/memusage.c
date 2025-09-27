@@ -15,7 +15,7 @@ void memusage_init (void)
 {
 }
 
-int memusage (pid_t pid)
+int memusage (pid_t pid, char use_vmrss)
 {
   char a[SIZE], *p, *q;
   int data, stack;
@@ -44,13 +44,17 @@ int memusage (pid_t pid)
     error (NULL);
 
   data = stack = 0;
-  q = strstr (p, "VmData:");
+  q = strstr (p, use_vmrss ? "VmRSS:" : "VmData:");
   if (q != NULL)
     {
       sscanf (q, "%*s %d", &data);
-      q = strstr (q, "VmStk:");
-      if (q != NULL)
-        sscanf (q, "%*s %d\n", &stack);
+      if (!use_vmrss) {
+        // If we use VmRSS, we don’t need to add
+        // VmStk. That only matters for VmData.
+        q = strstr (q, "VmStk:");
+        if (q != NULL)
+          sscanf (q, "%*s %d\n", &stack);
+      }
     }
 
   return (data + stack);
