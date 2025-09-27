@@ -212,10 +212,6 @@ char **parse (char **p)
           case PARSE:
             state = INPUT1;
             function = *p;
-            if (strcmp (*p, "--use-vmrss") == 0) {
-              profile.use_vmrss = 1;
-              state = PARSE;
-            }
             if (strcmp (*p, "--cpu") == 0)
               input1 = (unsigned int *) &profile.cpu;
             else if (strcmp (*p, "--mem") == 0)
@@ -255,6 +251,11 @@ char **parse (char **p)
             else if (strcmp (*p, "--silent") == 0)
               {
                 silent = 1;
+                state = PARSE;
+              }
+            else if (strcmp (*p, "--use-vmrss") == 0)
+              {
+                profile.use_vmrss = 1;
                 state = PARSE;
               }
             else
