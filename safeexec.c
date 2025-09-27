@@ -253,7 +253,7 @@ char **parse (char **p)
                 silent = 1;
                 state = PARSE;
               }
-            else if (strcmp (*p, "--use-vmrss") == 0)
+            else if (strcmp (*p, "--vmrss") == 0)
               {
                 profile.use_vmrss = 1;
                 state = PARSE;
@@ -344,6 +344,7 @@ void printusage (char **p)
   fprintf (stderr, "\t--usage   <filename>          Report statistics to ... (default: stderr)\n");
   fprintf (stderr, "\t--chroot  <path>              Directory to chrooted (default: /tmp)\n");
   fprintf (stderr, "\t--error   <path>              Print stderr to file (default: /dev/null)\n");
+  fprintf (stderr, "\t--vmrss                       Use VMRSS instead of VmData+VmStk\n");
 }
 
 void wallclock (int v)
