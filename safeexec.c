@@ -37,7 +37,7 @@
 #define NICE_LEVEL      15
 #define LARGECONST 4194304
 
-struct config profile = { 1, 32768, 0, 0, 8192, 8192, 0, 10, 5000, 65535 };
+struct config profile = { 1, 32768, 0, 0, 8192, 8192, 0, 10, 5000, 65535, 0 };
 struct config *pdefault = &profile;
 
 pid_t pid;			/* is global, because we kill the proccess in alarm handler */
@@ -212,6 +212,10 @@ char **parse (char **p)
           case PARSE:
             state = INPUT1;
             function = *p;
+            if (strcmp (*p, "--use-vmrss") == 0) {
+              profile.use_vmrss = 1;
+              state = PARSE;
+            }
             if (strcmp (*p, "--cpu") == 0)
               input1 = (unsigned int *) &profile.cpu;
             else if (strcmp (*p, "--mem") == 0)
@@ -509,7 +513,7 @@ int main (int argc, char **argv, char **envp)
           do
             {
               msleep (INTERVAL);
-              memused = memusage (pid);
+              memused = memusage (pid, profile.use_vmrss);
               if (memused > -1)
                 {
                   mem = max (mem, memused);
