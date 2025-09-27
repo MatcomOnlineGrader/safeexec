@@ -19,6 +19,8 @@ struct config
 
   uid_t minuid;
   uid_t maxuid;
+
+  char mem;
 };
 
 #endif

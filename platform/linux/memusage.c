@@ -15,11 +15,21 @@ void memusage_init (void)
 {
 }
 
-int memusage (pid_t pid)
+int memusage (pid_t pid, char mem)
 {
-  char a[SIZE], *p, *q;
+  char a[SIZE], *p, *q, *mem_hdr;
   int data, stack;
   int n, v, fd;
+
+  if (mem == MEM_VMDATA){
+    mem_hdr = "VmData:";
+  }else if (mem == MEM_VMHWM){
+    mem_hdr = "VmHWM:";
+  }else if (mem == MEM_VMRSS){
+    mem_hdr = "VmRSS:";
+  }else{
+    error ("mem param must be one of: MEM_VMDATA, MEM_VMHWM, MEM_VMRSS");
+  }
 
   p = a;
   sprintf (p, "/proc/%d/status", pid);
@@ -44,7 +54,7 @@ int memusage (pid_t pid)
     error (NULL);
 
   data = stack = 0;
-  q = strstr (p, "VmData:");
+  q = strstr (p, mem_hdr);
   if (q != NULL)
     {
       sscanf (q, "%*s %d", &data);

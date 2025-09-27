@@ -3,6 +3,7 @@
 #include <limits.h>
 #include <fcntl.h>
 #include <kvm.h>
+#include <stdio.h>
 #include <sys/sysctl.h>
 #include <sys/user.h>
 #include <sys/resource.h>
@@ -26,10 +27,14 @@ void memusage_init (void)
     error("memusage_init: %s", errbuf);
 }
 
-int memusage (pid_t pid)
+int memusage (pid_t pid, char mem)
 {
   struct kinfo_proc *kp;
   int cnt = -1;
+
+  // Ignore the mem param
+  if (mem != MEM_VMDATA)
+    fprintf(stderr, "Warning: Flags involving VmData/VmRSS/VmHWM are ignored.\n");
 
   kp = kvm_getprocs(kd, KERN_PROC_PID, pid, &cnt);
   if ((kp == NULL && cnt > 0) || (kp != NULL && cnt < 0))
