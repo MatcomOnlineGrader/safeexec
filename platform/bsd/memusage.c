@@ -26,7 +26,7 @@ void memusage_init (void)
     error("memusage_init: %s", errbuf);
 }
 
-int memusage (pid_t pid, bool use_vmrss /* unused */)
+int memusage (pid_t pid, char use_vmrss /* unused */)
 {
   struct kinfo_proc *kp;
   int cnt = -1;

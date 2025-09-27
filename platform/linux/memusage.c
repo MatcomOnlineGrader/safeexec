@@ -15,7 +15,7 @@ void memusage_init (void)
 {
 }
 
-int memusage (pid_t pid, bool use_vmrss)
+int memusage (pid_t pid, char use_vmrss)
 {
   char a[SIZE], *p, *q;
   int data, stack;
